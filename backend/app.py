@@ -23,10 +23,34 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from data_preprocessing import LoanDataProcessor
 from model import LoanPredictionModel
 
+# Application Configuration
+class Config:
+    """Application configuration settings."""
+    # Server Configuration
+    DEFAULT_HOST = '127.0.0.1'  # Bind to localhost only (more secure)
+    DEFAULT_PORT = 5000         # Default Flask development port
+
+    # To change the port, set environment variable: PORT=8080
+    # To change the host, set environment variable: HOST=0.0.0.0 (for network access)
+    # To enable debug mode, set environment variable: FLASK_DEBUG=true
+
+    @staticmethod
+    def get_host():
+        return os.environ.get('HOST', Config.DEFAULT_HOST)
+
+    @staticmethod
+    def get_port():
+        return int(os.environ.get('PORT', Config.DEFAULT_PORT))
+
+    @staticmethod
+    def is_debug():
+        return os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+
 # Initialize Flask application
 app = Flask(__name__,
            template_folder='../frontend',
-           static_folder='../frontend')
+           static_folder='../frontend',
+           static_url_path='')
 
 # Enable CORS for all routes
 CORS(app, origins=['*'])
@@ -358,10 +382,29 @@ def favicon():
 
 @app.route('/<path:filename>')
 def serve_static(filename):
-    """Serve static files from frontend directory."""
+    """Serve static files from frontend directory, excluding API routes."""
+    # Skip API routes to avoid conflicts
+    if filename.startswith('api/'):
+        from flask import abort
+        abort(404)
+
     try:
         # Get the absolute path to the frontend directory
         frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'frontend')
+        file_path = os.path.join(frontend_dir, filename)
+
+        # Security check: ensure the file is within the frontend directory
+        if not os.path.abspath(file_path).startswith(os.path.abspath(frontend_dir)):
+            logger.warning(f"[SECURITY] Attempted path traversal: {filename}")
+            from flask import abort
+            abort(403)
+
+        # Check if file exists
+        if not os.path.exists(file_path):
+            logger.warning(f"[404] Static file not found: {filename}")
+            from flask import abort
+            abort(404)
+
         return send_from_directory(frontend_dir, filename)
     except Exception as e:
         logger.error(f"[ERROR] Failed to serve static file {filename}: {str(e)}")
@@ -598,10 +641,20 @@ if __name__ == '__main__':
         logger.info("   POST /api/batch-predict   - Batch predictions")
         logger.info("   GET  /                    - Frontend interface")
 
+        # Get configuration
+        host = Config.get_host()
+        port = Config.get_port()
+        debug_mode = Config.is_debug()
+
+        logger.info(f"[SERVER] Starting server on {host}:{port}")
+        logger.info(f"[CONFIG] Debug mode: {debug_mode}")
+        logger.info(f"[CONFIG] To change port: set PORT environment variable (current: {port})")
+        logger.info(f"[CONFIG] To change host: set HOST environment variable (current: {host})")
+
         app.run(
-            host='0.0.0.0',
-            port=5000,
-            debug=False,  # Set to False for production
+            host=host,
+            port=port,
+            debug=debug_mode,
             threaded=True
         )
     else:
