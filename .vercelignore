@@ -38,3 +38,8 @@ create_favicon.py
 fixme.txt
 test_metrics.html
 README.md
+DEPLOYMENT.md
+*.pkl
+*.old.py
+data/
+frontend/*.png
