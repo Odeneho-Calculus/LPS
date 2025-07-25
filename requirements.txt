@@ -1,4 +1,4 @@
 # Web Framework Only (No ML dependencies needed for rule-based model)
 Flask==2.3.2
-Flask-CORS==4.0.0
+Flask-CORS==6.0.0
 Werkzeug==2.3.6
