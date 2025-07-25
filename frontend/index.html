@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Professional Loan Prediction System</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzJkNzJkNiIvPgo8cGF0aCBkPSJNOC41IDEwaDE1djEyaC0xNXoiIGZpbGw9IiNmZmZmZmYiLz4KPHA+aCBkPSJNMTAgMTNoMyIgc3Ryb2tlPSIjMmQ3MmQ2IiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8cGF0aCBkPSJNMTAgMTZoNSIgc3Ryb2tlPSIjMmQ3MmQ2IiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8cGF0aCBkPSJNMTAgMTloNCIgc3Ryb2tlPSIjMmQ3MmQ2IiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjE2IiByPSIyIiBmaWxsPSIjMTBiOTgxIi8+Cjwvc3ZnPgo=">
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
     <!-- Navigation Header -->
     <header class="header">
         <div class="container">
             <div class="nav-brand">
                 <i class="fas fa-university"></i>
-                <h1>LoanPredict Pro</h1>
+                <h1>Loan Status Prediction</h1>
             </div>
             <nav class="nav-menu">
                 <a href="#home" class="nav-link active">Home</a>
@@ -32,7 +37,8 @@
                 <div class="hero-content">
                     <h2 class="hero-title">Advanced AI-Powered Loan Approval Prediction</h2>
                     <p class="hero-subtitle">
-                        Get instant, data-driven loan approval predictions using cutting-edge machine learning technology.
+                        Get instant, data-driven loan approval predictions using cutting-edge machine learning
+                        technology.
                         Our Decision Tree algorithm analyzes multiple factors to provide accurate assessments.
                     </p>
                     <div class="hero-stats">
@@ -41,11 +47,11 @@
                             <span class="stat-label">Model Accuracy</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-number" id="predictions-made">0</span>
+                            <span class="stat-number" id="predictions-made">Loading...</span>
                             <span class="stat-label">Predictions Made</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-number">< 2s</span>
+                            <span class="stat-number" id="response-time">Loading...</span>
                             <span class="stat-label">Response Time</span>
                         </div>
                     </div>
@@ -174,8 +180,8 @@
                                         Applicant Income (Monthly)
                                     </label>
                                     <input type="number" id="applicantIncome" name="ApplicantIncome"
-                                           class="form-control" placeholder="Enter monthly income"
-                                           min="0" max="100000" required>
+                                        class="form-control" placeholder="Enter monthly income" min="0" max="100000"
+                                        required>
                                     <div class="field-validation"></div>
                                     <small class="field-hint">Enter your monthly income in your local currency</small>
                                 </div>
@@ -186,8 +192,8 @@
                                         Co-applicant Income (Monthly)
                                     </label>
                                     <input type="number" id="coapplicantIncome" name="CoapplicantIncome"
-                                           class="form-control" placeholder="Enter co-applicant income"
-                                           min="0" max="100000" value="0">
+                                        class="form-control" placeholder="Enter co-applicant income" min="0"
+                                        max="100000" value="0">
                                     <div class="field-validation"></div>
                                     <small class="field-hint">Enter 0 if no co-applicant</small>
                                 </div>
@@ -217,9 +223,8 @@
                                         <i class="fas fa-money-check"></i>
                                         Loan Amount Requested
                                     </label>
-                                    <input type="number" id="loanAmount" name="LoanAmount"
-                                           class="form-control" placeholder="Enter loan amount"
-                                           min="1" max="10000" required>
+                                    <input type="number" id="loanAmount" name="LoanAmount" class="form-control"
+                                        placeholder="Enter loan amount" min="1" max="10000" required>
                                     <div class="field-validation"></div>
                                     <small class="field-hint">Amount in thousands (e.g., 150 for $150,000)</small>
                                 </div>
@@ -460,13 +465,179 @@
         </section>
     </main>
 
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="section-header">
+                <h3>About Loan Status Prediction</h3>
+                <p>Advanced AI-powered loan prediction system built with professional standards</p>
+            </div>
+
+            <div class="about-content">
+                <div class="about-intro">
+                    <h4>🏦 Professional Loan Assessment Technology</h4>
+                    <p>
+                        Loan Status Prediction leverages cutting-edge machine learning algorithms to provide accurate,
+                        data-driven loan approval predictions. Our system analyzes multiple financial and
+                        demographic factors to deliver instant assessments with high confidence levels.
+                    </p>
+                </div>
+
+                <div class="about-grid">
+                    <div class="about-card">
+                        <div class="card-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h5>Advanced AI Model</h5>
+                        <p>
+                            Our Decision Tree classifier is optimized through hyperparameter tuning and
+                            cross-validation, achieving <strong>85.37% accuracy</strong> with robust
+                            performance across diverse loan applications.
+                        </p>
+                        <ul class="feature-list">
+                            <li>Hyperparameter optimization</li>
+                            <li>5-fold cross-validation</li>
+                            <li>Feature importance analysis</li>
+                            <li>Real-time predictions</li>
+                        </ul>
+                    </div>
+
+                    <div class="about-card">
+                        <div class="card-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h5>Enterprise Security</h5>
+                        <p>
+                            Built with professional security standards including input validation,
+                            XSS protection, and secure API endpoints. All data processing follows
+                            industry best practices.
+                        </p>
+                        <ul class="feature-list">
+                            <li>Server-side validation</li>
+                            <li>CORS configuration</li>
+                            <li>Input sanitization</li>
+                            <li>Error handling</li>
+                        </ul>
+                    </div>
+
+                    <div class="about-card">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h5>Key Performance Metrics</h5>
+                        <p>
+                            Our model demonstrates excellent performance across all evaluation metrics,
+                            ensuring reliable predictions for both approvals and rejections.
+                        </p>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="metric-value">85.37%</span>
+                                <span class="metric-label">Accuracy</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-value">86.96%</span>
+                                <span class="metric-label">Precision</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-value">85.37%</span>
+                                <span class="metric-label">Recall</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-value">84.04%</span>
+                                <span class="metric-label">F1-Score</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="about-card">
+                        <div class="card-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h5>Technical Architecture</h5>
+                        <p>
+                            Modern web architecture with Python Flask backend, responsive frontend,
+                            and comprehensive API endpoints designed for scalability and maintainability.
+                        </p>
+                        <ul class="tech-stack">
+                            <li><strong>Backend:</strong> Python, Flask, scikit-learn</li>
+                            <li><strong>Frontend:</strong> HTML5, CSS3, JavaScript ES6</li>
+                            <li><strong>ML Pipeline:</strong> Pandas, NumPy, Matplotlib</li>
+                            <li><strong>API:</strong> RESTful endpoints with CORS</li>
+                        </ul>
+                    </div>
+
+                    <div class="about-card">
+                        <div class="card-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h5>Data Processing Pipeline</h5>
+                        <p>
+                            Comprehensive data preprocessing with intelligent missing value imputation,
+                            feature engineering, and categorical encoding for optimal model performance.
+                        </p>
+                        <ul class="feature-list">
+                            <li>Domain-knowledge imputation</li>
+                            <li>Advanced feature engineering</li>
+                            <li>Log transformations</li>
+                            <li>Categorical encoding</li>
+                        </ul>
+                    </div>
+
+                    <div class="about-card">
+                        <div class="card-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h5>User Experience</h5>
+                        <p>
+                            Intuitive multi-step form with real-time validation, financial calculations,
+                            and responsive design that works seamlessly across all devices.
+                        </p>
+                        <ul class="feature-list">
+                            <li>Progressive form validation</li>
+                            <li>Real-time financial summaries</li>
+                            <li>Mobile-responsive design</li>
+                            <li>Accessibility compliant</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="about-disclaimer">
+                    <div class="disclaimer-card">
+                        <h5>⚠️ Important Disclaimer</h5>
+                        <p>
+                            This system is designed for <strong>educational and demonstration purposes</strong>.
+                            While our AI model provides accurate predictions based on historical data,
+                            real-world loan decisions should always involve qualified financial professionals
+                            and comply with local regulations and lending practices.
+                        </p>
+                        <p>
+                            For production deployment in financial services, additional validation,
+                            bias testing, regulatory compliance, and comprehensive audit trails are essential.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="about-cta">
+                    <h4>Ready to Experience AI-Powered Loan Prediction?</h4>
+                    <p>Test our advanced system with your loan application details and get instant predictions with
+                        detailed confidence analysis.</p>
+                    <a href="#home" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i>
+                        Try Loan Prediction
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4>LoanPredict Pro</h4>
-                    <p>Advanced AI-powered loan prediction system built with cutting-edge machine learning technology.</p>
+                    <h4>Loan Status Prediction</h4>
+                    <p>Advanced AI-powered loan prediction system built with cutting-edge machine learning technology.
+                    </p>
                 </div>
                 <div class="footer-section">
                     <h4>Technology Stack</h4>
@@ -479,11 +650,12 @@
                 </div>
                 <div class="footer-section">
                     <h4>Disclaimer</h4>
-                    <p><small>This system provides predictions for informational purposes only. Actual loan decisions should be made by qualified financial professionals.</small></p>
+                    <p><small>This system provides predictions for informational purposes only. Actual loan decisions
+                            should be made by qualified financial professionals.</small></p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 LoanPredict Pro. Built with professional standards and best practices.</p>
+                <p>&copy; 2025 Loan Status Prediction. Built with professional standards and best practices.</p>
             </div>
         </div>
     </footer>
@@ -494,4 +666,5 @@
     <!-- JavaScript -->
     <script src="script.js"></script>
 </body>
+
 </html>

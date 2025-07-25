@@ -31,16 +31,87 @@ app = Flask(__name__,
 # Enable CORS for all routes
 CORS(app, origins=['*'])
 
-# Configure logging
+# Configure safe logging that handles Unicode properly on Windows
+import codecs
+import locale
+
+def safe_encode(text):
+    """Safely encode text to avoid Unicode errors on Windows console."""
+    if isinstance(text, str):
+        try:
+            # Try to encode with the console encoding
+            text.encode(locale.getpreferredencoding())
+            return text
+        except UnicodeEncodeError:
+            # Replace problematic Unicode characters with safe alternatives
+            replacements = {
+                '🚀': '[STARTUP]',
+                '✅': '[SUCCESS]',
+                '📊': '[INFO]',
+                '🌐': '[SERVER]',
+                '📍': '[ENDPOINTS]',
+                '❌': '[ERROR]',
+                '🔧': '[CONFIG]',
+                '🎯': '[TARGET]',
+                '📈': '[METRICS]',
+                '🏋️': '[TRAINING]',
+                '💾': '[SAVE]',
+                '📋': '[REPORT]',
+                '🔢': '[DATA]',
+                '🎉': '[COMPLETE]'
+            }
+            for emoji, replacement in replacements.items():
+                text = text.replace(emoji, replacement)
+            return text
+    return str(text)
+
+class SafeStreamHandler(logging.StreamHandler):
+    """Stream handler that safely encodes Unicode characters."""
+    def emit(self, record):
+        try:
+            msg = self.format(record)
+            msg = safe_encode(msg)
+            stream = self.stream
+            stream.write(msg + self.terminator)
+            self.flush()
+        except Exception:
+            self.handleError(record)
+
+# Remove existing handlers to avoid duplicates
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('loan_prediction_api.log'),
-        logging.StreamHandler()
+        logging.FileHandler('loan_prediction_api.log', encoding='utf-8'),
+        SafeStreamHandler(sys.stdout)
     ]
 )
 logger = logging.getLogger(__name__)
+
+# Override the built-in print function to handle Unicode safely
+import builtins
+_original_print = builtins.print
+
+def safe_print(*args, **kwargs):
+    """Safe print function that handles Unicode characters."""
+    try:
+        # Convert all arguments to safe strings
+        safe_args = [safe_encode(str(arg)) for arg in args]
+        _original_print(*safe_args, **kwargs)
+    except Exception:
+        # Fallback to original print with error handling
+        try:
+            _original_print(*args, **kwargs)
+        except UnicodeEncodeError:
+            # Last resort: print without problematic characters
+            safe_args = [str(arg).encode('ascii', 'ignore').decode('ascii') for arg in args]
+            _original_print(*safe_args, **kwargs)
+
+# Replace the built-in print function
+builtins.print = safe_print
 
 # Global variables for model and preprocessor
 model = None
@@ -89,7 +160,7 @@ def load_or_train_model():
             logger.info("Loading existing trained model...")
             model = LoanPredictionModel()
             if model.load_model(model_path):
-                logger.info("✅ Model loaded successfully")
+                logger.info("[SUCCESS] Model loaded successfully")
 
                 # Also load preprocessor for feature names
                 preprocessor = LoanDataProcessor()
@@ -126,12 +197,12 @@ def load_or_train_model():
         model.save_model(model_path)
 
         model_info = model.get_model_info()
-        logger.info(f"✅ Model trained successfully with accuracy: {metrics.get('accuracy', 0):.4f}")
+        logger.info(f"[SUCCESS] Model trained successfully with accuracy: {metrics.get('accuracy', 0):.4f}")
 
         return True
 
     except Exception as e:
-        logger.error(f"❌ Error loading/training model: {str(e)}")
+        logger.error(f"[ERROR] Error loading/training model: {str(e)}")
         logger.error(traceback.format_exc())
         return False
 
@@ -262,10 +333,40 @@ def index():
     """Serve the main frontend interface."""
     return send_from_directory('../frontend', 'index.html')
 
+@app.route('/favicon.ico')
+def favicon():
+    """Serve the favicon."""
+    try:
+        # Get the absolute path to the frontend directory
+        frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'frontend')
+        favicon_path = os.path.join(frontend_dir, 'favicon.ico')
+
+        logger.info(f"[DEBUG] Looking for favicon at: {favicon_path}")
+        logger.info(f"[DEBUG] Favicon exists: {os.path.exists(favicon_path)}")
+
+        if os.path.exists(favicon_path):
+            return send_from_directory(frontend_dir, 'favicon.ico')
+        else:
+            logger.error(f"[ERROR] Favicon not found at: {favicon_path}")
+            from flask import abort
+            abort(404)
+    except Exception as e:
+        logger.error(f"[ERROR] Failed to serve favicon: {str(e)}")
+        # Return a 404 response if favicon can't be found
+        from flask import abort
+        abort(404)
+
 @app.route('/<path:filename>')
 def serve_static(filename):
     """Serve static files from frontend directory."""
-    return send_from_directory('../frontend', filename)
+    try:
+        # Get the absolute path to the frontend directory
+        frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'frontend')
+        return send_from_directory(frontend_dir, filename)
+    except Exception as e:
+        logger.error(f"[ERROR] Failed to serve static file {filename}: {str(e)}")
+        from flask import abort
+        abort(404)
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
@@ -472,15 +573,15 @@ def batch_predict():
 # Application initialization
 def initialize_app():
     """Initialize the Flask application."""
-    logger.info("🚀 Initializing Loan Prediction API...")
+    logger.info("[STARTUP] Initializing Loan Prediction API...")
 
     # Load or train model
     if not load_or_train_model():
-        logger.error("❌ Failed to initialize model. API will not function properly.")
+        logger.error("[ERROR] Failed to initialize model. API will not function properly.")
         return False
 
-    logger.info("✅ Loan Prediction API initialized successfully!")
-    logger.info(f"📊 Model Info: {model_info}")
+    logger.info("[SUCCESS] Loan Prediction API initialized successfully!")
+    logger.info(f"[INFO] Model Info: {model_info}")
 
     return True
 
@@ -488,8 +589,8 @@ if __name__ == '__main__':
     # Initialize application
     if initialize_app():
         # Start development server
-        logger.info("🌐 Starting development server...")
-        logger.info("📍 API Endpoints:")
+        logger.info("[SERVER] Starting development server...")
+        logger.info("[INFO] API Endpoints:")
         logger.info("   GET  /api/health          - Health check")
         logger.info("   POST /api/predict         - Single prediction")
         logger.info("   GET  /api/model-info      - Model information")
@@ -504,5 +605,5 @@ if __name__ == '__main__':
             threaded=True
         )
     else:
-        logger.error("❌ Failed to start application")
+        logger.error("[ERROR] Failed to start application")
         sys.exit(1)

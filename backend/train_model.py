@@ -273,7 +273,7 @@ This model is for demonstration and educational purposes. Real-world deployment
 should include additional validation, monitoring, and compliance measures.
 Consult with domain experts before production deployment.
 
-Report generated automatically by LoanPredict Pro Training Pipeline.
+Report generated automatically by Loan Status Prediction Training Pipeline.
     """.strip()
 
     return report

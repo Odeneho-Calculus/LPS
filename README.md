@@ -146,8 +146,8 @@ curl -X POST http://localhost:5000/api/predict \
 #### Response Format
 ```json
 {
-  "request_id": "20240101_120000_123456",
-  "timestamp": "2024-01-01T12:00:00",
+  "request_id": "20250101_120000_123456",
+  "timestamp": "2025-01-01T12:00:00",
   "input_data": { ... },
   "prediction": {
     "prediction": 1,
