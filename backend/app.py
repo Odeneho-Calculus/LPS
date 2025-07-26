@@ -163,6 +163,15 @@ def bad_request(error):
     """Handle bad request errors."""
     return jsonify({'error': 'Bad request', 'message': str(error)}), 400
 
+@app.errorhandler(404)
+def not_found(error):
+    """Handle 404 errors - return JSON for API routes, HTML for others."""
+    if request.path.startswith('/api/'):
+        return jsonify({'error': 'Endpoint not found'}), 404
+    else:
+        # For non-API routes, let Flask handle it normally
+        return jsonify({'error': 'Page not found'}), 404
+
 @app.errorhandler(500)
 def internal_error(error):
     """Handle internal server errors."""
@@ -380,6 +389,19 @@ def favicon():
         from flask import abort
         abort(404)
 
+# Specific routes for common static files
+@app.route('/styles.css')
+def serve_css():
+    """Serve the main CSS file."""
+    frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'frontend')
+    return send_from_directory(frontend_dir, 'styles.css', mimetype='text/css')
+
+@app.route('/script.js')
+def serve_js():
+    """Serve the main JavaScript file."""
+    frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'frontend')
+    return send_from_directory(frontend_dir, 'script.js', mimetype='application/javascript')
+
 @app.route('/<path:filename>')
 def serve_static(filename):
     """Serve static files from frontend directory, excluding API routes."""
@@ -391,7 +413,12 @@ def serve_static(filename):
     try:
         # Get the absolute path to the frontend directory
         frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'frontend')
+
+        logger.info(f"[DEBUG] Attempting to serve static file: {filename}")
+        logger.info(f"[DEBUG] Frontend directory: {frontend_dir}")
+
         file_path = os.path.join(frontend_dir, filename)
+        logger.info(f"[DEBUG] Full file path: {file_path}")
 
         # Security check: ensure the file is within the frontend directory
         if not os.path.abspath(file_path).startswith(os.path.abspath(frontend_dir)):
@@ -401,10 +428,11 @@ def serve_static(filename):
 
         # Check if file exists
         if not os.path.exists(file_path):
-            logger.warning(f"[404] Static file not found: {filename}")
+            logger.warning(f"[404] Static file not found: {filename} at {file_path}")
             from flask import abort
             abort(404)
 
+        logger.info(f"[SUCCESS] Serving static file: {filename}")
         return send_from_directory(frontend_dir, filename)
     except Exception as e:
         logger.error(f"[ERROR] Failed to serve static file {filename}: {str(e)}")
